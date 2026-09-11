@@ -1,0 +1,293 @@
+<!-- 月卡管理列表页：查询筛选、表格分页、弹窗和增删改操作。 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>月卡管理列表 - 月卡后台管理系统</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <!-- 整体后台布局：左侧导航 + 右侧主内容 -->
+  <div class="app">
+    <!-- 左侧公共导航栏 -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">MC</span>
+        <span class="brand-text">月卡后台管理</span>
+      </div>
+      <nav class="menu">
+        <a class="menu-link" data-page="index.html" href="index.html">
+          <span class="menu-label">工作台首页</span>
+        </a>
+        <button class="menu-parent" type="button">
+          <span class="menu-label">月卡管理</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="submenu">
+          <a data-page="monthCard.html" href="monthCard.html">月卡列表</a>
+          <a data-page="addMonthCard.html" href="addMonthCard.html">增加月卡</a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- 右侧主内容区 -->
+    <div class="main">
+      <!-- 顶部公共头部 -->
+      <header class="topbar">
+        <button class="icon-btn" id="sidebarToggle" type="button" title="折叠/展开菜单">≡</button>
+        <div class="topbar-title">月卡管理列表</div>
+        <div class="topbar-right">
+          <span class="user-avatar">管</span>
+          <span>管理员 / admin</span>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- 页面标题和添加按钮 -->
+        <div class="page-head">
+          <div>
+            <h1>月卡管理</h1>
+            <p>支持查询、新增、编辑、续费、删除与批量删除</p>
+          </div>
+          <button class="btn" id="addBtn" type="button">＋ 添加月卡</button>
+        </div>
+
+        <!-- 查询筛选卡片 -->
+        <section class="card">
+          <div class="card-head">
+            <h2>查询筛选</h2>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <!-- 车主姓名查询 -->
+              <div class="form-item">
+                <label>车主姓名</label>
+                <input class="input" id="queryOwnerName" type="text" placeholder="请输入车主姓名">
+              </div>
+              <!-- 车牌号查询 -->
+              <div class="form-item">
+                <label>车牌号</label>
+                <input class="input" id="queryPlateNo" type="text" placeholder="请输入车牌号">
+              </div>
+              <!-- 状态筛选 -->
+              <div class="form-item">
+                <label>月卡状态</label>
+                <select class="select" id="queryStatus">
+                  <option value="">全部状态</option>
+                  <option value="0">可用</option>
+                  <option value="1">已过期</option>
+                </select>
+              </div>
+              <!-- 查询与重置按钮 -->
+              <div class="form-item">
+                <label>&nbsp;</label>
+                <div class="form-actions" style="margin-top:0;">
+                  <button class="btn" id="queryBtn" type="button">查询</button>
+                  <button class="btn secondary" id="resetQueryBtn" type="button">重置</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 月卡表格和分页 -->
+        <section class="card">
+          <div class="card-head">
+            <h2>月卡列表</h2>
+            <div>
+              <span class="hint" id="resultCount">共 0 条记录</span>
+              <button class="btn danger sm" id="batchDeleteBtn" type="button">批量删除</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <!-- 表头全选 -->
+                  <th style="width:44px;">
+                    <input type="checkbox" id="checkAll">
+                  </th>
+                  <th>车主姓名</th>
+                  <th>手机号</th>
+                  <th>车牌号</th>
+                  <th>车型</th>
+                  <th>颜色</th>
+                  <th>车位号</th>
+                  <th>办理月数</th>
+                  <th>缴费金额</th>
+                  <th>缴费方式</th>
+                  <th>开始日期</th>
+                  <th>结束日期</th>
+                  <th>剩余天数</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <!-- 表格内容由 monthCard.js 动态生成 -->
+              <tbody id="tableBody"></tbody>
+            </table>
+            <div class="empty-state hidden" id="emptyState">暂无符合条件的月卡数据</div>
+          </div>
+          <div class="pagination">
+            <div class="pagination-left">
+              <!-- 每页条数选择 -->
+              每页
+              <select class="select" id="pageSizeSelect" style="width:70px;display:inline-block;margin:0 6px;">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+              </select>
+              条
+            </div>
+            <div class="pagination-right">
+              <!-- 页码信息和翻页按钮 -->
+              <span class="page-info" id="pageInfo">第 1 / 1 页</span>
+              <button class="btn secondary sm" id="prevPage" type="button">上一页</button>
+              <button class="btn secondary sm" id="nextPage" type="button">下一页</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- 查看只读弹窗 -->
+  <div class="modal-mask hidden" id="viewModal">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <h3>月卡详情</h3>
+        <button class="icon-btn" type="button" data-close="viewModal">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-grid" id="viewDetail"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" type="button" data-close="viewModal">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑与续费共用弹窗 -->
+  <div class="modal-mask hidden" id="editModal">
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <h3 id="editModalTitle">编辑月卡</h3>
+        <button class="icon-btn" type="button" data-close="editModal">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm" novalidate>
+          <!-- 车辆信息字段 -->
+          <h3 class="card-head" style="padding-left:0;">车辆信息</h3>
+          <div class="form-grid">
+            <div class="form-item">
+              <label>车主姓名<span class="required">*</span></label>
+              <input class="input" id="editOwnerName" type="text">
+              <span class="field-error" data-error-for="editOwnerName"></span>
+            </div>
+            <div class="form-item">
+              <label>手机号<span class="required">*</span></label>
+              <input class="input" id="editPhone" type="text">
+              <span class="field-error" data-error-for="editPhone"></span>
+            </div>
+            <div class="form-item">
+              <label>车牌号<span class="required">*</span></label>
+              <input class="input" id="editPlateNo" type="text">
+              <span class="field-error" data-error-for="editPlateNo"></span>
+            </div>
+            <div class="form-item">
+              <label>车型<span class="required">*</span></label>
+              <input class="input" id="editCarType" type="text">
+              <span class="field-error" data-error-for="editCarType"></span>
+            </div>
+            <div class="form-item">
+              <label>颜色<span class="required">*</span></label>
+              <input class="input" id="editCarColor" type="text">
+              <span class="field-error" data-error-for="editCarColor"></span>
+            </div>
+            <div class="form-item">
+              <label>车位号<span class="required">*</span></label>
+              <input class="input" id="editParkingSpace" type="text">
+              <span class="field-error" data-error-for="editParkingSpace"></span>
+            </div>
+          </div>
+
+          <!-- 缴费信息和日期计算字段 -->
+          <h3 class="card-head" style="padding-left:0;">缴费信息</h3>
+          <div class="form-grid">
+            <div class="form-item">
+              <label>办理月数<span class="required">*</span></label>
+              <input class="input" id="editMonthCount" type="number" min="1">
+              <span class="field-error" data-error-for="editMonthCount"></span>
+            </div>
+            <div class="form-item">
+              <label>缴费金额<span class="required">*</span></label>
+              <input class="input" id="editAmount" type="number" min="0" step="0.01">
+              <span class="field-error" data-error-for="editAmount"></span>
+            </div>
+            <div class="form-item">
+              <label>缴费方式<span class="required">*</span></label>
+              <select class="select" id="editPayMethod">
+                <option value="">请选择</option>
+                <option value="现金">现金</option>
+                <option value="微信">微信</option>
+                <option value="支付宝">支付宝</option>
+                <option value="银行卡">银行卡</option>
+              </select>
+              <span class="field-error" data-error-for="editPayMethod"></span>
+            </div>
+            <div class="form-item">
+              <label>开始日期<span class="required">*</span></label>
+              <input class="input" id="editStartDate" type="date">
+              <span class="field-error" data-error-for="editStartDate"></span>
+            </div>
+            <div class="form-item">
+              <label>结束日期<span class="required">*</span></label>
+              <input class="input" id="editEndDate" type="date">
+              <span class="field-error" data-error-for="editEndDate"></span>
+            </div>
+            <div class="form-item">
+              <label>剩余有效天数</label>
+              <div class="preview-strip" style="margin-top:0;">
+                <strong id="editRemainPreview">--</strong>
+              </div>
+            </div>
+            <div class="form-item">
+              <label>自动判断状态</label>
+              <div class="preview-strip" style="margin-top:0;">
+                <strong id="editStatusPreview">--</strong>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" type="button" data-close="editModal">取消</button>
+        <button class="btn" id="editSaveBtn" type="button">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 删除确认弹窗 -->
+  <div class="modal-mask hidden" id="deleteModal">
+    <div class="modal modal-md">
+      <div class="modal-head">
+        <h3 id="deleteModalTitle">删除确认</h3>
+        <button class="icon-btn" type="button" data-close="deleteModal">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="confirm-message" id="deleteModalMessage"></p>
+        <p class="confirm-hint">删除后无法恢复，请确认操作。</p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn secondary" type="button" data-close="deleteModal">取消</button>
+        <button class="btn danger" id="deleteConfirmBtn" type="button">确认删除</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/common.js"></script>
+  <script src="../js/monthCard.js"></script>
+</body>
+</html>

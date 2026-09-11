@@ -1,0 +1,131 @@
+<!-- 工作台首页：展示统计卡片、快捷入口和扩展功能占位。 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工作台首页 - 月卡后台管理系统</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <!-- 整体后台布局：左侧导航 + 右侧主内容 -->
+  <div class="app">
+    <!-- 左侧公共导航栏 -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">MC</span>
+        <span class="brand-text">月卡后台管理</span>
+      </div>
+      <nav class="menu">
+        <a class="menu-link" data-page="index.html" href="index.html">
+          <span class="menu-label">工作台首页</span>
+        </a>
+        <button class="menu-parent" type="button">
+          <span class="menu-label">月卡管理</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="submenu">
+          <a data-page="monthCard.html" href="monthCard.html">月卡列表</a>
+          <a data-page="addMonthCard.html" href="addMonthCard.html">增加月卡</a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- 右侧主内容区 -->
+    <div class="main">
+      <!-- 顶部公共头部 -->
+      <header class="topbar">
+        <button class="icon-btn" id="sidebarToggle" type="button" title="折叠/展开菜单">≡</button>
+        <div class="topbar-title">工作台首页</div>
+        <div class="topbar-right">
+          <span class="user-avatar">管</span>
+          <span>管理员 / admin</span>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- 页面标题 -->
+        <div class="page-head">
+          <div>
+            <h1>工作台</h1>
+            <p>月卡业务数据总览</p>
+          </div>
+        </div>
+
+        <!-- 四张统计卡片 -->
+        <section class="stat-grid">
+          <!-- 月卡车辆总数，由 JS 动态计算 -->
+          <div class="stat-card stat-blue">
+            <div class="stat-label">月卡车辆总数</div>
+            <div class="stat-value" id="statVehicle">0</div>
+          </div>
+          <!-- 年度累计收费，使用模拟固定值 -->
+          <div class="stat-card stat-green">
+            <div class="stat-label">年度累计收费</div>
+            <div class="stat-value" id="statIncome">¥0.00</div>
+          </div>
+          <!-- 入驻企业总数 -->
+          <div class="stat-card stat-orange">
+            <div class="stat-label">入驻企业总数</div>
+            <div class="stat-value" id="statCompany">0</div>
+          </div>
+          <!-- 一体杆总数 -->
+          <div class="stat-card stat-purple">
+            <div class="stat-label">一体杆总数</div>
+            <div class="stat-value" id="statBarrier">0</div>
+          </div>
+        </section>
+
+        <!-- 快捷入口 -->
+        <section class="card">
+          <div class="card-head">
+            <h2>快捷入口</h2>
+          </div>
+          <div class="card-body">
+            <div class="quick-grid">
+              <!-- 跳转到月卡列表 -->
+              <a class="quick-item" href="monthCard.html">
+                <div class="quick-mark">→</div>
+                <div>
+                  <strong>月卡列表</strong>
+                  <span>查询、编辑、续费、删除</span>
+                </div>
+              </a>
+              <!-- 跳转到增加月卡 -->
+              <a class="quick-item" href="addMonthCard.html">
+                <div class="quick-mark">＋</div>
+                <div>
+                  <strong>增加月卡</strong>
+                  <span>办理新的月卡记录</span>
+                </div>
+              </a>
+              <!-- 预留的数据统计入口 -->
+              <div class="quick-item">
+                <div class="quick-mark">↗</div>
+                <div>
+                  <strong>数据统计</strong>
+                  <span>月卡数据汇总分析</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 预留扩展占位 -->
+        <section class="card">
+          <div class="card-head">
+            <h2>扩展功能</h2>
+          </div>
+          <div class="card-body">
+            <div class="placeholder-box">预留扩展占位容器</div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/common.js"></script>
+  <script src="../js/home.js"></script>
+</body>
+</html>

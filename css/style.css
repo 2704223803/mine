@@ -1,0 +1,976 @@
+/* 月卡后台管理系统统一样式。 */
+
+/* 设计变量：统一颜色、圆角、阴影等视觉参数。 */
+:root {
+  /* 主色：统一使用蓝色强调色，避免页面出现多套颜色。 */
+  --accent: #2f6fed;
+  --accent-strong: #1f54c8;
+  --accent-soft: #eef4ff;
+  --sidebar-bg: #101828;
+  --sidebar-text: #c6d0df;
+  --bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --text: #17213a;
+  --muted: #667085;
+  --border: #e5e7eb;
+  --danger: #d94a4a;
+  --success: #1f9d68;
+  --warning: #d68a2e;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 6px 18px rgba(16, 24, 40, 0.05);
+  --shadow-modal: 0 20px 60px rgba(16, 24, 40, 0.22);
+}
+
+/* 基础重置和全局排版。 */
+* {
+  box-sizing: border-box;
+}
+
+/* 页面根高度保持一致，方便 sticky 顶部导航使用。 */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  /* 优先使用现代无衬线字体，中文回退到微软雅黑和苹方。 */
+  font-family: "Outfit", "Segoe UI Variable", "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(47, 111, 237, 0.08), transparent 32%),
+    radial-gradient(circle at 92% 8%, rgba(34, 160, 107, 0.05), transparent 30%),
+    var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 后台整体布局。 */
+.app {
+  min-height: 100vh;
+}
+
+/* 左侧导航栏。 */
+.sidebar {
+  /* 固定定位，使侧边栏在内容滚动时始终可见。 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 232px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  transition: width 0.2s ease, transform 0.2s ease;
+  z-index: 20;
+}
+
+.brand {
+  /* 固定高度，与顶部导航保持一致，形成稳定头部节奏。 */
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 20px;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+
+.brand-text {
+  font-size: 16px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.menu {
+  padding: 12px 10px;
+}
+
+.menu-link,
+.menu-parent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+  padding: 11px 12px;
+  color: var(--sidebar-text);
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.menu-link {
+  justify-content: flex-start;
+}
+
+.menu-link:hover,
+.menu-parent:hover,
+.menu-link.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.menu-link.active {
+  /* 当前菜单使用主题色填充，并通过阴影提高识别度。 */
+  background: var(--accent);
+  box-shadow: 0 6px 18px rgba(47, 111, 237, 0.28);
+}
+
+.menu-label {
+  white-space: nowrap;
+}
+
+.arrow {
+  color: #8fa0ba;
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+
+.menu-parent.open .arrow {
+  transform: rotate(180deg);
+}
+
+.submenu {
+  /* 子菜单默认隐藏，由 JavaScript 添加 open 类后显示。 */
+  display: none;
+  margin: 4px 0 6px 12px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.submenu.open {
+  display: block;
+}
+
+.submenu a {
+  display: block;
+  padding: 8px 12px;
+  margin: 3px 0;
+  border-radius: 7px;
+  color: #b5c2d6;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.submenu a:hover,
+.submenu a.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+body.sidebar-collapsed .sidebar {
+  /* 折叠状态只保留图标区域。 */
+  width: 72px;
+}
+
+body.sidebar-collapsed .brand {
+  justify-content: center;
+  padding: 0;
+}
+
+body.sidebar-collapsed .brand-text,
+body.sidebar-collapsed .menu-label,
+body.sidebar-collapsed .arrow,
+body.sidebar-collapsed .submenu {
+  display: none;
+}
+
+body.sidebar-collapsed .menu-link::before {
+  content: "▤";
+  font-size: 18px;
+  color: inherit;
+}
+
+body.sidebar-collapsed .menu-parent::before {
+  content: "▦";
+  font-size: 18px;
+  color: inherit;
+}
+
+body.sidebar-collapsed .menu-link,
+body.sidebar-collapsed .menu-parent {
+  justify-content: center;
+  padding: 11px 0;
+}
+
+/* 右侧主内容与顶部导航。 */
+.main {
+  /* 主内容区为侧边栏让出固定宽度。 */
+  margin-left: 232px;
+  transition: margin-left 0.2s ease;
+  min-height: 100vh;
+}
+
+body.sidebar-collapsed .main {
+  margin-left: 72px;
+}
+
+.topbar {
+  /* 顶部导航使用半透明背景和模糊，保持页面层级清晰。 */
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 26px;
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.02);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.icon-btn {
+  border: 0;
+  background: transparent;
+  color: #52607a;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 6px 8px;
+  border-radius: 7px;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.icon-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.topbar-title {
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* 页面内容容器与标题。 */
+.content {
+  /* 使用较大的页面内边距，保证后台内容不会显得拥挤。 */
+  padding: 32px 32px 52px;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.page-head h1 {
+  /* 标题使用 clamp，让字号随屏幕宽度平滑变化。 */
+  margin: 0;
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1.12;
+  font-weight: 720;
+  letter-spacing: -0.035em;
+  max-width: 760px;
+}
+
+.page-head p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  max-width: 680px;
+}
+
+/* 通用卡片容器。 */
+.card {
+  /* 卡片使用细边框和低对比阴影，避免过重视觉负担。 */
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 1px rgba(16, 24, 40, 0.03), 0 12px 34px rgba(16, 24, 40, 0.06);
+  margin-bottom: 22px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.card:hover {
+  border-color: #dbe4f2;
+  box-shadow: 0 2px 2px rgba(16, 24, 40, 0.03), 0 18px 44px rgba(16, 24, 40, 0.08);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-head h2,
+.card-head h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* 首页统计卡片。 */
+.stat-grid {
+  /* 四列统计卡片，窄屏下由媒体查询改为两列或一列。 */
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.stat-card {
+  /* 左侧强调线用于统一标记统计卡片。 */
+  position: relative;
+  min-height: 132px;
+  padding: 21px 22px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  box-shadow: 0 1px 1px rgba(16, 24, 40, 0.03), 0 10px 28px rgba(16, 24, 40, 0.05);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.09);
+}
+
+.stat-card .stat-label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.stat-card .stat-value {
+  margin-top: 20px;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 首页快捷入口。 */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: 14px;
+}
+
+.quick-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.quick-item:hover {
+  border-color: #b8cdfa;
+  background: #fbfdff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(47, 111, 237, 0.08);
+}
+
+.quick-mark {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  font-weight: 700;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.quick-item strong {
+  display: block;
+  font-size: 15px;
+}
+
+.quick-item span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* 按钮体系。 */
+.placeholder-box {
+  min-height: 168px;
+  border: 1px dashed #c4cede;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: #fbfcfe;
+}
+
+.btn {
+  /* 所有按钮统一为内联 flex 和固定高度。 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 15px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.1s ease, box-shadow 0.16s ease;
+}
+
+.btn:hover {
+  background: var(--accent-strong);
+  box-shadow: 0 8px 18px rgba(47, 111, 237, 0.22);
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.btn.secondary {
+  background: #fff;
+  color: #33405b;
+  border-color: var(--border);
+}
+
+.btn.secondary:hover {
+  border-color: #b8cdfa;
+  color: var(--accent);
+  background: #fbfdff;
+  box-shadow: 0 6px 16px rgba(47, 111, 237, 0.08);
+}
+
+.btn.danger {
+  background: var(--danger);
+}
+
+.btn.danger:hover {
+  background: #b93b3b;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: var(--accent);
+}
+
+.btn.ghost:hover {
+  background: var(--accent-soft);
+}
+
+.btn.sm {
+  height: 30px;
+  padding: 0 11px;
+  font-size: 13px;
+}
+
+/* 表单布局与输入控件。 */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px 16px;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-item label {
+  color: #3f4d66;
+  font-size: 13px;
+}
+
+.form-item label .required {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
+.input,
+.select,
+.textarea {
+  /* 输入控件统一尺寸和圆角，focus 时使用蓝色外圈提示。 */
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.textarea {
+  height: auto;
+  padding: 10px 12px;
+  resize: vertical;
+}
+
+.input:hover,
+.select:hover,
+.textarea:hover {
+  border-color: #c7d3e8;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.12);
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled,
+.input[readonly],
+.select[readonly],
+.textarea[readonly] {
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.input.error,
+.select.error {
+  border-color: var(--danger);
+}
+
+.field-error {
+  min-height: 16px;
+  color: var(--danger);
+  font-size: 12px;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* 月卡列表表格。 */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table {
+  /* 表格使用完整宽度，窄屏时由外层容器横向滚动。 */
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1060px;
+}
+
+.table th,
+.table td {
+  padding: 12px 13px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table th {
+  /* 表头使用浅灰背景，与数据行区分。 */
+  background: #f8fafc;
+  color: #4b5563;
+  font-weight: 650;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.table tbody tr {
+  transition: background 0.14s ease;
+}
+
+.table tbody tr:hover {
+  background: #fafcff;
+}
+
+.table .money {
+  font-variant-numeric: tabular-nums;
+}
+
+.status-badge {
+  /* 状态徽标使用胶囊圆角，颜色与状态语义对应。 */
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.status-badge.available {
+  color: var(--success);
+  background: #eaf8f1;
+}
+
+.status-badge.expired {
+  color: var(--danger);
+  background: #fff0ef;
+}
+
+.table-actions {
+  display: flex;
+  gap: 7px;
+  flex-wrap: nowrap;
+}
+
+.link-btn {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  font-size: 13px;
+  transition: opacity 0.14s ease;
+}
+
+.link-btn:hover {
+  opacity: 0.72;
+  text-decoration: underline;
+}
+
+.link-btn.danger {
+  color: var(--danger);
+}
+
+/* 分页控件。 */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  flex-wrap: wrap;
+}
+
+.pagination-left,
+.page-info {
+  color: var(--muted);
+}
+
+.pagination-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 弹窗和详情展示。 */
+.modal-mask {
+  /* 遮罩固定铺满视口，点击空白区域可关闭弹窗。 */
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.48);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.16s ease both;
+}
+
+.modal-mask.hidden {
+  display: none;
+}
+
+.modal {
+  /* 弹窗限制最大高度，内容过长时内部滚动。 */
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--shadow-modal);
+  animation: modalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.modal-md {
+  max-width: 640px;
+}
+
+.modal-lg {
+  max-width: 880px;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 17px 21px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-head h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.modal-body {
+  padding: 22px;
+}
+
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 15px 21px;
+  border-top: 1px solid var(--border);
+}
+
+.confirm-message {
+  margin: 0 0 8px;
+  color: #344054;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.confirm-hint {
+  margin: 0;
+  color: var(--danger);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px 22px;
+}
+
+.detail-item {
+  padding-bottom: 11px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.detail-item.full {
+  grid-column: 1 / -1;
+}
+
+.detail-item .label {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.detail-item .value {
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.empty-state {
+  padding: 36px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.preview-strip {
+  /* 日期计算预览使用浅蓝底和细边框，突出计算反馈。 */
+  display: flex;
+  gap: 28px;
+  padding: 13px 17px;
+  border: 1px solid #dbeafe;
+  background: #f4f8ff;
+  border-radius: var(--radius-sm);
+  margin-top: 16px;
+}
+
+.reveal {
+  /* 初始状态隐藏并向下偏移，进入视口后由 JS 添加 is-visible。 */
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.is-visible {
+  /* 滚动进入视口后恢复显示并回到原位。 */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.preview-strip strong {
+  font-size: 18px;
+  color: var(--accent-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.preview-strip span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+/* 动画定义。 */
+@keyframes fadeIn {
+  /* 遮罩淡入动画。 */
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalIn {
+  /* 弹窗从下方轻微上移并放大，形成自然入场。 */
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 响应式布局。 */
+@media (max-width: 1100px) {
+  /* 中等屏幕下减少统计卡片和表单列数。 */
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  /* 手机屏幕下侧边栏折叠为图标模式，内容改为单列。 */
+  .sidebar {
+    width: 72px;
+  }
+
+  .brand {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .brand-text,
+  .menu-label,
+  .arrow,
+  .submenu {
+    display: none;
+  }
+
+  .menu-link::before {
+    content: "▤";
+    font-size: 18px;
+    color: inherit;
+  }
+
+  .menu-parent::before {
+    content: "▦";
+    font-size: 18px;
+    color: inherit;
+  }
+
+  .menu-link,
+  .menu-parent {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .main {
+    margin-left: 72px;
+  }
+
+  .stat-grid,
+  .quick-grid,
+  .form-grid,
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* 尊重系统减少动效偏好，关闭所有动画和过渡。 */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
